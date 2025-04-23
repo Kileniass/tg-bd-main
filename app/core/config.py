@@ -11,7 +11,17 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str
     
     # Database
-    DATABASE_URL: str = "sqlite:///./car_dating.db"
+    POSTGRES_SERVER: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    DATABASE_URL: Optional[str] = None
+    
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
     
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)
