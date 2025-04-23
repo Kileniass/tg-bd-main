@@ -1,14 +1,14 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import models, crud, database, utils, schemas
-from app.database import SessionLocal, engine
+from app.database import SessionLocal, engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import AboutUpdate
 from app.core.config import settings
-from app.routers import auth, profiles, likes
+from app.routers import auth_router, profiles_router, likes_router
 
-# Создание таблиц в базе данных (если их ещё нет)
-models.Base.metadata.create_all(bind=engine)
+# Создание таблиц в базе данных
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -34,9 +34,9 @@ def get_db():
         db.close()
 
 # Подключение роутеров
-app.include_router(auth.router, prefix=settings.API_V1_STR)
-app.include_router(profiles.router, prefix=settings.API_V1_STR)
-app.include_router(likes.router, prefix=settings.API_V1_STR)
+app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(profiles_router, prefix=settings.API_V1_STR)
+app.include_router(likes_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
